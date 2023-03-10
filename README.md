@@ -29,6 +29,6 @@ Your app is ready to be deployed!
 
 ### Web application built and deployed using AWS Amplify!
 
-- Added authentication to app allowing users to sign up, sign in, and manage their account.
-- The app also has a scalable GraphQL API configured with an Amazon DynamoDB database, allowing users to create and delete notes.
-- Added file storage using Amazon S3 so that users can upload images and view them in their app.
+- Added authentication to app allowing users to sign up, sign in and manage their account
+- Configured GraphQL API with Amazon DynamoDB database to enable users to create and delete notes
+- Added file storage using Amazon S3 for users to upload and view images in the app
