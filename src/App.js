@@ -16,7 +16,7 @@ import {
   createNote as createNoteMutation,
   deleteNote as deleteNoteMutation,
 } from './graphql/mutations'
-import { Image } from 'react'
+import Image from 'react'
 
 const App = ({ signOut }) => {
   const [notes, setNotes] = useState([])
