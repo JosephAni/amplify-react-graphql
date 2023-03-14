@@ -1,4 +1,4 @@
-# Getting Started with Amplify React GraphQL
+# Getting Started with Full stack Amplify React GraphQL
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
