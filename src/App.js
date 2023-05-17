@@ -10,7 +10,7 @@ import {
   TextField,
   View,
   withAuthenticator,
-  Image, // corrected import
+  Image,
 } from '@aws-amplify/ui-react'
 import { listNotes } from './graphql/queries'
 import {
@@ -31,7 +31,6 @@ const App = ({ signOut }) => {
     await Promise.all(
       notesFromAPI.map(async (note) => {
         if (note.image) {
-          // corrected to use note.image instead of note.name
           const url = await Storage.get(note.image)
           note.image = url
         }
@@ -48,9 +47,10 @@ const App = ({ signOut }) => {
     const data = {
       name: form.get('name'),
       description: form.get('description'),
-      image: image ? image.name : null, // check if image exists before storing
+      image: image ? image.name : null,
     }
-    if (data.image) await Storage.put(data.name, image)
+    if (data.image)
+      await Storage.put(data.image, image, { contentType: 'image/*' })
     await API.graphql({
       query: createNoteMutation,
       variables: { input: data },
@@ -60,7 +60,6 @@ const App = ({ signOut }) => {
   }
 
   async function deleteNote({ id, name }) {
-    // destructured argument
     const newNotes = notes.filter((note) => note.id !== id)
     setNotes(newNotes)
     await Storage.remove(name)
@@ -92,9 +91,8 @@ const App = ({ signOut }) => {
             required
           />
           <View style={{ position: 'relative' }}>
-            {' '}
-            {/* added positioning */}
-            <Image // corrected component name
+            {/* Add positioning */}
+            <Image
               id='image'
               src={null}
               style={{
@@ -105,6 +103,7 @@ const App = ({ signOut }) => {
                 left: 0,
                 opacity: 0,
                 pointerEvents: 'none', // prevent click events from triggering
+                display: 'none', // hide the file input from view
               }}
               accept='image/*'
               onChange={(e) => {
@@ -122,6 +121,13 @@ const App = ({ signOut }) => {
             Create Note
           </Button>
         </Flex>
+        {/* Move input out of previous Flex */}
+        <input
+          name='image'
+          type='file'
+          style={{ display: 'none' }}
+          accept='image/*'
+        />
       </View>
       <Heading level={2}>Current Notes</Heading>
       <View margin='3rem 0'>
