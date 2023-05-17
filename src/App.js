@@ -10,13 +10,13 @@ import {
   TextField,
   View,
   withAuthenticator,
+  Image, // corrected import
 } from '@aws-amplify/ui-react'
 import { listNotes } from './graphql/queries'
 import {
   createNote as createNoteMutation,
   deleteNote as deleteNoteMutation,
 } from './graphql/mutations'
-import Image from 'react'
 
 const App = ({ signOut }) => {
   const [notes, setNotes] = useState([])
@@ -31,7 +31,8 @@ const App = ({ signOut }) => {
     await Promise.all(
       notesFromAPI.map(async (note) => {
         if (note.image) {
-          const url = await Storage.get(note.name)
+          // corrected to use note.image instead of note.name
+          const url = await Storage.get(note.image)
           note.image = url
         }
         return note
@@ -47,9 +48,9 @@ const App = ({ signOut }) => {
     const data = {
       name: form.get('name'),
       description: form.get('description'),
-      image: image.name,
+      image: image ? image.name : null, // check if image exists before storing
     }
-    if (!!data.image) await Storage.put(data.name, image)
+    if (data.image) await Storage.put(data.name, image)
     await API.graphql({
       query: createNoteMutation,
       variables: { input: data },
@@ -59,6 +60,7 @@ const App = ({ signOut }) => {
   }
 
   async function deleteNote({ id, name }) {
+    // destructured argument
     const newNotes = notes.filter((note) => note.id !== id)
     setNotes(newNotes)
     await Storage.remove(name)
@@ -89,6 +91,33 @@ const App = ({ signOut }) => {
             variation='quiet'
             required
           />
+          <View style={{ position: 'relative' }}>
+            {' '}
+            {/* added positioning */}
+            <Image // corrected component name
+              id='image'
+              src={null}
+              style={{
+                width: 0,
+                height: 0,
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                opacity: 0,
+                pointerEvents: 'none', // prevent click events from triggering
+              }}
+              accept='image/*'
+              onChange={(e) => {
+                const file = e.target.files[0]
+                document.getElementById('image').src = URL.createObjectURL(file)
+              }}
+            />
+            <label htmlFor='image'>
+              <Button as='span' variation='primary'>
+                Add Image
+              </Button>
+            </label>
+          </View>
           <Button type='submit' variation='primary'>
             Create Note
           </Button>
